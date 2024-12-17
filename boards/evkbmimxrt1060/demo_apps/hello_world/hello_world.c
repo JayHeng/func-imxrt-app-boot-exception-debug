@@ -15,8 +15,7 @@
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
-#define EXAMPLE_LED_GPIO     BOARD_USER_LED_GPIO
-#define EXAMPLE_LED_GPIO_PIN BOARD_USER_LED_PIN
+
 
 /*******************************************************************************
  * Prototypes
@@ -24,11 +23,16 @@
 
 typedef enum _hw_failure_mode
 {
-    HW_FailureModeLed = 0,
-    HW_FailureModeWfi,
-    HW_FailureModeAccessPeriph,
+    HW_FailureModeStart   = 0,
 
-    HW_FailureModeEnd = HW_FailureModeAccessPeriph
+    HW_FailureModeLedBlinky,
+    HW_FailureModeCpuWfi,
+    HW_FailureModeSystemReset,
+    HW_FailureModePeriphRegAccess,
+    HW_FailureModeFlashMemset,
+    HW_FailureModeMpuRegionAccess,
+
+    HW_FailureModeEnd = HW_FailureModeMpuRegionAccess
 } hw_failure_mode_t;
 
 /*******************************************************************************
@@ -57,6 +61,16 @@ void SysTick_DelayTicks(uint32_t n)
     }
 }
 
+uint32_t HWF_GetLastMode(void)
+{
+    return IOMUXC_SNVS_GPR->GPR0;
+}
+
+void HWF_SetLastMode(uint32_t val)
+{
+    IOMUXC_SNVS_GPR->GPR0 = val;
+}
+
 void HWF_BlinkyLed(void)
 {
     /* Set systick reload value to generate 1ms interrupt */
@@ -74,11 +88,11 @@ void HWF_BlinkyLed(void)
         PRINTF("Toggle LED once.\r\n");
         if (g_pinSetCnt % 2)
         {
-            GPIO_PinWrite(EXAMPLE_LED_GPIO, EXAMPLE_LED_GPIO_PIN, 0U);
+            GPIO_PinWrite(GPIO1, 8U, 0U);
         }
         else
         {
-            GPIO_PinWrite(EXAMPLE_LED_GPIO, EXAMPLE_LED_GPIO_PIN, 1U);
+            GPIO_PinWrite(GPIO1, 8U, 1U);
         }
         g_pinSetCnt++;
         if (g_pinSetCnt > 8)
@@ -89,23 +103,47 @@ void HWF_BlinkyLed(void)
     }
 }
 
-void HWF_EnterWFI(void)
+void HWF_WfiCpu(void)
 {
+    HWF_SetLastMode((uint32_t)s_targetFailureMode);
+
     __asm volatile("dsb");
     /* wait for interrupt: the next interrupt will wake us up */
     __asm volatile("wfi");
     __asm volatile("isb");
 }
 
-void HWF_AccessPeriph(void)
+void HWF_ResetSystem(void)
 {
-    //PRINTF("%x\r\n", CAN1->MCR);
-    //PRINTF("%x\r\n", CAN1->CTRL1);
-    //PRINTF("%x\r\n", CAN1->TIMER);
+    HWF_SetLastMode((uint32_t)s_targetFailureMode);
+
+    NVIC_SystemReset();
+}
+
+void HWF_AccessPeriphReg(void)
+{
+    /* Disable CAN clock gate. */
+    CLOCK_DisableClock(kCLOCK_Can1);
+    CLOCK_DisableClock(kCLOCK_Can1S);
+
+    hw_failure_mode_t mode = (hw_failure_mode_t)(HWF_GetLastMode());
+    if (mode == HW_FailureModePeriphRegAccess)
+    {
+        uint32_t can1rxmgmask = CAN1->RXMGMASK;
+        if (can1rxmgmask)
+        {
+            assert(false);
+        }
+    }
+    HWF_SetLastMode((uint32_t)s_targetFailureMode);
+  
+    PRINTF("CAN1->MCR = %x\r\n", CAN1->MCR);
+    PRINTF("CAN1->CTRL1 = %x\r\n", CAN1->CTRL1);
+    PRINTF("CAN1->TIMER = %x\r\n", CAN1->TIMER);
     
-    PRINTF("%x\r\n", CAN1->RXMGMASK);
-    PRINTF("%x\r\n", CAN1->RX14MASK);
-    PRINTF("%x\r\n", CAN1->RX15MASK);
+    PRINTF("CAN1->RXMGMASK = %x\r\n", CAN1->RXMGMASK);
+    PRINTF("CAN1->RX14MASK = %x\r\n", CAN1->RX14MASK);
+    PRINTF("CAN1->RX15MASK = %x\r\n", CAN1->RX15MASK);
   
     //PRINTF("%x\r\n", CAN1->ECR);
     //PRINTF("%x\r\n", CAN1->ESR1);
@@ -122,21 +160,43 @@ void HWF_AccessPeriph(void)
    */
 }
 
+void HWF_MemsetFlash(void)
+{
+    HWF_SetLastMode((uint32_t)s_targetFailureMode);
+
+    memset((void *)(FlexSPI_AMBA_BASE + 128 *1024), 0x5A, 0x10);
+}
+
+void HWF_AccessMpuRegion(void)
+{
+    HWF_SetLastMode((uint32_t)s_targetFailureMode);
+
+    memset((void *)0x20200000, 0x5A, 0x10);
+}
+
 void APP_FailureModeSelection(hw_failure_mode_t targetFailureMode)
 {
     switch (targetFailureMode)
     {
-        case HW_FailureModeLed:
+        case HW_FailureModeLedBlinky:
             HWF_BlinkyLed();
             break;
-        case HW_FailureModeWfi:
-            HWF_EnterWFI();
+        case HW_FailureModeCpuWfi:
+            HWF_WfiCpu();
             break;
-        case HW_FailureModeAccessPeriph:
-            HWF_AccessPeriph();
+        case HW_FailureModeSystemReset:
+            HWF_ResetSystem();
+            break;
+        case HW_FailureModePeriphRegAccess:
+            HWF_AccessPeriphReg();
+            break;
+        case HW_FailureModeFlashMemset:
+            HWF_MemsetFlash();
+            break;
+        case HW_FailureModeMpuRegionAccess:
+            HWF_AccessMpuRegion();
             break;
         default:
-            assert(false);
             break;
     }
 }
@@ -146,10 +206,12 @@ void APP_FailureModeSelection(hw_failure_mode_t targetFailureMode)
  */
 int main(void)
 {
-    char ch;
+    BOARD_ConfigMPU();
+
+    s_targetFailureMode = (hw_failure_mode_t)HWF_GetLastMode();
+    APP_FailureModeSelection(s_targetFailureMode);
 
     /* Init board hardware. */
-    BOARD_ConfigMPU();
     BOARD_InitBootPins();
     BOARD_InitBootClocks();
     BOARD_InitDebugConsole();
@@ -158,16 +220,19 @@ int main(void)
     SystemCoreClockUpdate();
     CLOCK_EnableClock(kCLOCK_Trace);
 
-    PRINTF("\r\n########## HW failure Demo ###########\n\r\n");
-    PRINTF("\r\nSelect the desired operation \n\r\n");
-    PRINTF("Press %c for enter case: LED blinky mode\r\n", (uint8_t)'A' + (uint8_t)HW_FailureModeLed);
-    PRINTF("Press %c for enter case: CPU WFI mode\r\n", (uint8_t)'A' + (uint8_t)HW_FailureModeWfi);
-    PRINTF("Press %c for enter case: Peripheral access before clocking mode\r\n", (uint8_t)'A' + (uint8_t)HW_FailureModeAccessPeriph);
+    PRINTF("\r\n########## RT HW Failure Demo ###########\n\r\n");
+    PRINTF("\r\nSelect the desired mode \n\r\n");
+    PRINTF("Press %c for enter case: LED blinky mode\r\n",                                  (uint8_t)'A' + (uint8_t)HW_FailureModeLedBlinky);
+    PRINTF("Press %c for enter case: CPU WFI mode\r\n",                                     (uint8_t)'A' + (uint8_t)HW_FailureModeCpuWfi);
+    PRINTF("Press %c for enter case: System soft reset mode\r\n",                           (uint8_t)'A' + (uint8_t)HW_FailureModeSystemReset);
+    PRINTF("Press %c for enter case: Peripheral register access without clocking mode\r\n", (uint8_t)'A' + (uint8_t)HW_FailureModePeriphRegAccess);
+    PRINTF("Press %c for enter case: Flash access via memset mode\r\n",                     (uint8_t)'A' + (uint8_t)HW_FailureModeFlashMemset);
+    PRINTF("Press %c for enter case: MPU region access without permission mode\r\n",        (uint8_t)'A' + (uint8_t)HW_FailureModeMpuRegionAccess);
     PRINTF("\r\nWaiting for HW failure case select...\r\n\r\n");
 
     while (1)
     {
-        ch = GETCHAR();
+        char ch = GETCHAR();
         if ((ch >= 'a') && (ch <= 'z'))
         {
             ch -= 'a' - 'A';
