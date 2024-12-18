@@ -21,62 +21,24 @@
  * Prototypes
  ******************************************************************************/
 
+extern void hwf_main(void);
+
 /*******************************************************************************
  * Variables
  ******************************************************************************/
-volatile uint32_t g_systickCounter;
+
 
 /*******************************************************************************
  * Code
  ******************************************************************************/
-
-void SysTick_Handler(void)
-{
-    if (g_systickCounter != 0U)
-    {
-        g_systickCounter--;
-    }
-}
-
-void SysTick_DelayTicks(uint32_t n)
-{
-    g_systickCounter = n;
-    while (g_systickCounter != 0U)
-    {
-    }
-}
 
 /*!
  * @brief Main function
  */
 int main(void)
 {
-    char ch;
+    hwf_main();
 
-    /* Init board hardware. */
-    BOARD_ConfigMPU();
-    BOARD_InitPins();
-    BOARD_BootClockRUN();
-    BOARD_InitDebugConsole();
+    while (1);
 
-    /* Set systick reload value to generate 1ms interrupt */
-    if (SysTick_Config(SystemCoreClock / 1000U))
-    {
-        while (1)
-        {
-        }
-    }
-
-    PRINTF("hello world1.\r\n");
-    SysTick_DelayTicks(4000U);
-    
-    CLOCK_PowerOffRootClock(kCLOCK_Root_Can1);
-    CLOCK_DisableClock(kCLOCK_Can1);
-    PRINTF("%x\r\n", CAN1->RXMGMASK);
-
-    while (1)
-    {
-        ch = GETCHAR();
-        PUTCHAR(ch);
-    }
 }

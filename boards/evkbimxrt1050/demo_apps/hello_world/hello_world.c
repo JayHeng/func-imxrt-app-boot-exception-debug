@@ -21,35 +21,24 @@
  * Prototypes
  ******************************************************************************/
 
+extern void hwf_main(void);
+
 /*******************************************************************************
  * Variables
  ******************************************************************************/
 
+
 /*******************************************************************************
  * Code
  ******************************************************************************/
+
 /*!
  * @brief Main function
  */
 int main(void)
 {
-    char ch;
+    hwf_main();
 
-    /* Init board hardware. */
-    BOARD_ConfigMPU();
-    BOARD_InitBootPins();
-    BOARD_InitBootClocks();
-    BOARD_InitDebugConsole();
+    while (1);
 
-    /* Just enable the trace clock, leave coresight initialization to IDE debugger */
-    SystemCoreClockUpdate();
-    CLOCK_EnableClock(kCLOCK_Trace);
-
-    PRINTF("hello world.\r\n");
-
-    while (1)
-    {
-        ch = GETCHAR();
-        PUTCHAR(ch);
-    }
 }
