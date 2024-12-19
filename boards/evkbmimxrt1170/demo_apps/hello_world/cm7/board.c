@@ -394,6 +394,10 @@ void BOARD_ConfigMPU(void)
 #endif
 
 #if defined(XIP_EXTERNAL_FLASH) && (XIP_EXTERNAL_FLASH == 1)
+    /* Region 4 setting: Memory with Device type, not shareable, non-cacheable. */
+    MPU->RBAR = ARM_MPU_RBAR(7, 0x30000000U);
+    MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 2, 0, 0, 0, 0, ARM_MPU_REGION_SIZE_16MB);
+
     /* Region 8 setting: Memory with Normal type, not shareable, outer/inner write back. */
     MPU->RBAR = ARM_MPU_RBAR(8, 0x30000000U);
     MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 0, 0, 1, 1, 0, ARM_MPU_REGION_SIZE_16MB);

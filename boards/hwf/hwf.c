@@ -180,9 +180,9 @@ void HWF_MemsetFlash(void)
     HWF_SetLastMode((uint32_t)s_targetFailureMode);
 
 #if defined(MIMXRT1176_cm7_SERIES)
-    memset((void *)(FlexSPI1_AMBA_BASE + 128 *1024), 0x5A, 0x10);
+    memset((void *)(FlexSPI1_AMBA_BASE + 128 *1024), 0x5A, 64 * 1024);
 #else
-    memset((void *)(FlexSPI_AMBA_BASE + 128 *1024), 0x5A, 0x10);
+    memset((void *)(FlexSPI_AMBA_BASE + 128 *1024), 0x5A, 64 * 1024);
 #endif
 }
 
@@ -226,6 +226,9 @@ void APP_FailureModeSelection(hw_failure_mode_t targetFailureMode)
 void hwf_main(void)
 {
     BOARD_ConfigMPU();
+    /* Enable I cache and D cache */
+    //SCB_DisableDCache();
+    //SCB_DisableICache();
 
     s_targetFailureMode = (hw_failure_mode_t)HWF_GetLastMode();
     APP_FailureModeSelection(s_targetFailureMode);
@@ -248,7 +251,7 @@ void hwf_main(void)
 #endif
 
     PRINTF("\r\n########## RT HW Failure Demo ###########\n\r\n");
-    PRINTF("\r\nSelect the desired mode \n\r\n");
+    PRINTF("Select the desired mode \n\r\n");
     PRINTF("Press %c for enter case: LED blinky mode\r\n",                                  (uint8_t)'A' + (uint8_t)HW_FailureModeLedBlinky);
     PRINTF("Press %c for enter case: CPU WFI mode\r\n",                                     (uint8_t)'A' + (uint8_t)HW_FailureModeCpuWfi);
     PRINTF("Press %c for enter case: System soft reset mode\r\n",                           (uint8_t)'A' + (uint8_t)HW_FailureModeSystemReset);
@@ -264,6 +267,7 @@ void hwf_main(void)
         {
             ch -= 'a' - 'A';
         }
+        PRINTF("Entering case %c\r\n", ch);
         s_targetFailureMode = (hw_failure_mode_t)(ch - 'A');
 
         if (s_targetFailureMode <= HW_FailureModeEnd)
