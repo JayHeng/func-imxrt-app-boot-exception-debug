@@ -22,6 +22,8 @@ __attribute__((section(".boot_hdr.conf"), used))
 #pragma location = ".boot_hdr.conf"
 #endif
 
+#define MX25L12833F (1)
+
 const flexspi_nor_config_t qspiflash_config = {
     .memConfig =
         {
@@ -33,13 +35,37 @@ const flexspi_nor_config_t qspiflash_config = {
             .controllerMiscOption = (1u << kFlexSpiMiscOffset_SafeConfigFreqEnable),
             .deviceType           = kFlexSpiDeviceType_SerialNOR,
             .sflashPadType        = kSerialFlash_4Pads,
-            .serialClkFreq        = kFlexSpiSerialClk_120MHz,
+            // Verify device MX25L12833F
+            .serialClkFreq        = kFlexSpiSerialClk_80MHz,
             .sflashA1Size         = 8u * 1024u * 1024u,
+#if defined(MX25L12833F)
+            /* Enable flash configuration feature */
+            .configCmdEnable   = 1u,
+            .configModeType[0] = kDeviceConfigCmdType_Generic,
+            /* Set configuration command sequences */
+            .configCmdSeqs[0] =
+                {
+                    .seqNum   = 1,
+                    .seqId    = 12,
+                    .reserved = 0,
+                },
+            /* Prepare setting value for Read Register in flash */
+            .configCmdArgs[0] = 0x8740,
+            .lookupTable =
+                {
+                    // Write Status Register (WRSR/WRCR) LUTs
+                    [4 * 12 + 0] = FLEXSPI_LUT_SEQ(CMD_SDR, FLEXSPI_1PAD, 0x01, WRITE_SDR, FLEXSPI_1PAD, 0x02),
+
+                    // Read LUTs
+                    [4 * 0 + 0] = FLEXSPI_LUT_SEQ(CMD_SDR, FLEXSPI_1PAD, 0xEB, RADDR_SDR, FLEXSPI_4PAD, 0x18),
+                    [4 * 0 + 1] = FLEXSPI_LUT_SEQ(DUMMY_SDR, FLEXSPI_4PAD, 0x08, READ_SDR, FLEXSPI_4PAD, 0x04),
+#else
             .lookupTable =
                 {
                     // Read LUTs
-                    [0] = FLEXSPI_LUT_SEQ(CMD_SDR, FLEXSPI_1PAD, 0xEB, RADDR_SDR, FLEXSPI_4PAD, 0x18),
-                    [1] = FLEXSPI_LUT_SEQ(DUMMY_SDR, FLEXSPI_4PAD, 0x06, READ_SDR, FLEXSPI_4PAD, 0x04),
+                    [4 * 0 + 0] = FLEXSPI_LUT_SEQ(CMD_SDR, FLEXSPI_1PAD, 0xEB, RADDR_SDR, FLEXSPI_4PAD, 0x18),
+                    [4 * 0 + 1] = FLEXSPI_LUT_SEQ(DUMMY_SDR, FLEXSPI_4PAD, 0x06, READ_SDR, FLEXSPI_4PAD, 0x04),
+#endif
 
                     // Read Status LUTs
                     [4 * 1 + 0] = FLEXSPI_LUT_SEQ(CMD_SDR, FLEXSPI_1PAD, 0x05, READ_SDR, FLEXSPI_1PAD, 0x04),
