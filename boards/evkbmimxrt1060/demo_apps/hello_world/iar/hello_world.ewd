@@ -584,7 +584,7 @@
             <name>IJET_ID</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>9</version>
+                <version>10</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
                 <option>
@@ -859,6 +859,10 @@
                 <option>
                     <name>CatchV8ARREL3S</name>
                     <state>0</state>
+                </option>
+                <option>
+                    <name>IjetHWResetTimingOverride</name>
+                    <state>1</state>
                 </option>
             </data>
         </settings>
@@ -1752,11 +1756,11 @@
                 </option>
                 <option>
                     <name>OCDynDriverList</name>
-                    <state>CMSISDAP_ID</state>
+                    <state>JLINK_ID</state>
                 </option>
                 <option>
                     <name>OCLastSavedByProductVersion</name>
-                    <state>9.50.1.69462</state>
+                    <state>9.60.2.5384</state>
                 </option>
                 <option>
                     <name>UseFlashLoader</name>
@@ -2220,7 +2224,7 @@
             <name>IJET_ID</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>9</version>
+                <version>10</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
                 <option>
@@ -2496,6 +2500,10 @@
                     <name>CatchV8ARREL3S</name>
                     <state>0</state>
                 </option>
+                <option>
+                    <name>IjetHWResetTimingOverride</name>
+                    <state>1</state>
+                </option>
             </data>
         </settings>
         <settings>
@@ -2613,7 +2621,7 @@
                 <option>
                     <name>CCJLinkResetList</name>
                     <version>6</version>
-                    <state>7</state>
+                    <state>8</state>
                 </option>
                 <option>
                     <name>CCJLinkInterfaceCmdLine</name>
@@ -3856,7 +3864,7 @@
             <name>IJET_ID</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>9</version>
+                <version>10</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
                 <option>
@@ -4131,6 +4139,10 @@
                 <option>
                     <name>CatchV8ARREL3S</name>
                     <state>0</state>
+                </option>
+                <option>
+                    <name>IjetHWResetTimingOverride</name>
+                    <state>1</state>
                 </option>
             </data>
         </settings>
@@ -5492,7 +5504,7 @@
             <name>IJET_ID</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>9</version>
+                <version>10</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
                 <option>
@@ -5767,6 +5779,10 @@
                 <option>
                     <name>CatchV8ARREL3S</name>
                     <state>0</state>
+                </option>
+                <option>
+                    <name>IjetHWResetTimingOverride</name>
+                    <state>1</state>
                 </option>
             </data>
         </settings>
@@ -7128,7 +7144,7 @@
             <name>IJET_ID</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>9</version>
+                <version>10</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
                 <option>
@@ -7403,6 +7419,10 @@
                 <option>
                     <name>CatchV8ARREL3S</name>
                     <state>0</state>
+                </option>
+                <option>
+                    <name>IjetHWResetTimingOverride</name>
+                    <state>1</state>
                 </option>
             </data>
         </settings>
@@ -8764,7 +8784,7 @@
             <name>IJET_ID</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>9</version>
+                <version>10</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
                 <option>
@@ -9039,6 +9059,10 @@
                 <option>
                     <name>CatchV8ARREL3S</name>
                     <state>0</state>
+                </option>
+                <option>
+                    <name>IjetHWResetTimingOverride</name>
+                    <state>1</state>
                 </option>
             </data>
         </settings>
@@ -10400,7 +10424,7 @@
             <name>IJET_ID</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>9</version>
+                <version>10</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>0</debug>
                 <option>
@@ -10675,6 +10699,10 @@
                 <option>
                     <name>CatchV8ARREL3S</name>
                     <state>0</state>
+                </option>
+                <option>
+                    <name>IjetHWResetTimingOverride</name>
+                    <state>1</state>
                 </option>
             </data>
         </settings>
@@ -12036,7 +12064,7 @@
             <name>IJET_ID</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>9</version>
+                <version>10</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>0</debug>
                 <option>
@@ -12311,6 +12339,10 @@
                 <option>
                     <name>CatchV8ARREL3S</name>
                     <state>0</state>
+                </option>
+                <option>
+                    <name>IjetHWResetTimingOverride</name>
+                    <state>1</state>
                 </option>
             </data>
         </settings>
@@ -13672,7 +13704,7 @@
             <name>IJET_ID</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>9</version>
+                <version>10</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>0</debug>
                 <option>
@@ -13947,6 +13979,10 @@
                 <option>
                     <name>CatchV8ARREL3S</name>
                     <state>0</state>
+                </option>
+                <option>
+                    <name>IjetHWResetTimingOverride</name>
+                    <state>1</state>
                 </option>
             </data>
         </settings>
@@ -15308,7 +15344,7 @@
             <name>IJET_ID</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>9</version>
+                <version>10</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>0</debug>
                 <option>
@@ -15583,6 +15619,10 @@
                 <option>
                     <name>CatchV8ARREL3S</name>
                     <state>0</state>
+                </option>
+                <option>
+                    <name>IjetHWResetTimingOverride</name>
+                    <state>1</state>
                 </option>
             </data>
         </settings>
@@ -16944,7 +16984,7 @@
             <name>IJET_ID</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>9</version>
+                <version>10</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>0</debug>
                 <option>
@@ -17219,6 +17259,10 @@
                 <option>
                     <name>CatchV8ARREL3S</name>
                     <state>0</state>
+                </option>
+                <option>
+                    <name>IjetHWResetTimingOverride</name>
+                    <state>1</state>
                 </option>
             </data>
         </settings>
@@ -18580,7 +18624,7 @@
             <name>IJET_ID</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>9</version>
+                <version>10</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>0</debug>
                 <option>
@@ -18855,6 +18899,10 @@
                 <option>
                     <name>CatchV8ARREL3S</name>
                     <state>0</state>
+                </option>
+                <option>
+                    <name>IjetHWResetTimingOverride</name>
+                    <state>1</state>
                 </option>
             </data>
         </settings>

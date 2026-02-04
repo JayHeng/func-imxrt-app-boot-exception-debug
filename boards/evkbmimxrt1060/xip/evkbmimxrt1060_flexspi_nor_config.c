@@ -29,10 +29,10 @@ const flexspi_nor_config_t qspiflash_config = {
         {
             .tag                  = FLEXSPI_CFG_BLK_TAG,
             .version              = FLEXSPI_CFG_BLK_VERSION,
-            .readSampleClkSrc     = kFlexSPIReadSampleClk_LoopbackFromDqsPad,
+            .readSampleClkSrc     = kFlexSPIReadSampleClk_ExternalInputFromDqsPad,
             .csHoldTime           = 3u,
             .csSetupTime          = 3u,
-            .controllerMiscOption = (1u << kFlexSpiMiscOffset_SafeConfigFreqEnable),
+            .controllerMiscOption = (1u << kFlexSpiMiscOffset_SafeConfigFreqEnable) | (1u << kFlexSpiMiscOffset_DdrModeEnable), 
             .deviceType           = kFlexSpiDeviceType_SerialNOR,
             .sflashPadType        = kSerialFlash_4Pads,
             // Verify device MX25L12833F
@@ -41,7 +41,7 @@ const flexspi_nor_config_t qspiflash_config = {
 #if defined(MX25L12833F)
             /* Enable flash configuration feature */
             .configCmdEnable   = 1u,
-            .configModeType[0] = kDeviceConfigCmdType_Generic,
+            .configModeType[0] = kDeviceConfigCmdType_Spi2Xpi,
             /* Set configuration command sequences */
             .configCmdSeqs[0] =
                 {

@@ -243,4 +243,8 @@ void SystemCoreClockUpdate (void) {
 
 __attribute__ ((weak)) void SystemInitHook (void) {
   /* Void implementation of the weak function. */
+  
+#if defined(FOR_DEBUG_CONNECTION_ONLY)
+  SDK_DelayAtLeastUs(3000000, SystemCoreClock);
+#endif
 }
